@@ -30,6 +30,7 @@ jobs:
             echo "label=minor" >> $GITHUB_ENV
           else
             echo "label=patch" >> $GITHUB_ENV
+          fi
 
       - name: Remove existing semver labels
         run: |
