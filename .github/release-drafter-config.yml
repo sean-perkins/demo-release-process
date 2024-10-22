@@ -1,0 +1,39 @@
+name-template: "$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+filter-by-commitish: true
+commitish: main
+categories:
+  - title: "🚀 Features"
+    labels:
+      - "feature"
+  - title: "🐛 Bug Fixes"
+    labels:
+      - "bugfix"
+  - title: "🧰 Maintenance"
+    label: "chore"
+  - title: "🔝 Dependencies"
+    labels:
+      - "dependencies"
+      - "dependency"
+change-template: "- $TITLE (#$NUMBER)"
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+replacers:
+  - search: '/((?<!([A-Z0-9]{1,10})-?)[A-Z0-9]+-\d+)/g'
+    replace: "[$1](https://companyName.atlassian.net/browse/$1)"
+exclude-labels:
+  - "skip-changelog"
+version-resolver:
+  major:
+    labels:
+      - "major"
+  minor:
+    labels:
+      - "minor"
+  patch:
+    labels:
+      - "patch"
+  default: patch
+template: |
+  ## Changes
+
+  $CHANGES
