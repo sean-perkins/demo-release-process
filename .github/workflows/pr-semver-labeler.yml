@@ -31,9 +31,24 @@ jobs:
           else
             echo "label=patch" >> $GITHUB_ENV
 
-      - name: Add label to PR
+      - name: Remove existing semver labels
         run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          existing_labels=$(curl -s -H "Authorization: token ${{ secrets.PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels \
+            | jq -r '.[].name')
+
+          for label in $existing_labels; do
+            if [[ "$label" == "major" || "$label" == "minor" || "$label" == "patch" ]]; then
+              curl -X DELETE -H "Authorization: token ${{ secrets.PAT }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels/$label
+            fi
+          done
+
+      - name: Add the correct label
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.PAT }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels \
             -d '{"labels": ["${{ env.label }}"]}'
